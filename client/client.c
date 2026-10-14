@@ -2,7 +2,7 @@
 #include <sys/socket.h>
 #include <string.h>
 
-#include "../confing.h"
+#include "../config.h"
 
 //function definition
 void print_menu(){

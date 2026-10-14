@@ -4,6 +4,7 @@
 #define SEND_DATA 1
 #define EXIT 2
 
+#define ERROR -1
 #define SUCCESS 0
 #define SOCKET_CREATE_ERR -1
 #define SOCKET_BIND_ERR -2

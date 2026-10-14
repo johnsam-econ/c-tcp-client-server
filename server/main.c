@@ -16,13 +16,11 @@ int main(){
     char buffer[1024] = {'\0'};
 
     //socket creation
-    sockfd = socket(AF_INET,SOCK_STREAM,0);
-    if(sockfd == -1){
+    if(create_socket(&sockfd) == -1){
         perror("Error in creating the socket");
         exit_code = SOCKET_CREATE_ERR;
         goto close_all;
     }
-    printf("Socket created successfully\n");
 
     //address definition
     addr.sin_family = AF_INET;
