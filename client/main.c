@@ -15,8 +15,9 @@ int send_data(char *buffer, int sockfd);
 //main
 int main(){
     //definition
-    int sockfd;
-    struct sockaddr_in addr;
+    int exit_code = SUCCESS;
+    int sockfd = -1;
+    struct sockaddr_in addr = {0};
     socklen_t addrlen = sizeof(addr);
     int choice = -1;
     int loop = 1;
@@ -28,7 +29,8 @@ int main(){
     sockfd = socket(AF_INET,SOCK_STREAM,0);
     if(sockfd == -1){
         perror("Error in creating the socket");
-        return SOCKET_CREATE_ERR;
+        exit_code = SOCKET_CREATE_ERR;
+        goto close_all;
     }
     printf("Socket created successfully\n");
 
@@ -37,15 +39,15 @@ int main(){
     addr.sin_port = htons(PORT);
     if(inet_pton(AF_INET,server_ip,&addr.sin_addr) != 1){
         perror("Invalid Ip Address");
-        close(sockfd);
-        return SOCKET_CONNECT_ERR;
+        exit_code = SOCKET_CONNECT_ERR;
+        goto close_all;
     }
 
     //socket connection
     if(connect(sockfd,(struct sockaddr*) &addr,addrlen) == -1){
         perror("Error in connecting the socket");
-        close(sockfd);
-        return SOCKET_CONNECT_ERR;
+        exit_code = SOCKET_CONNECT_ERR;
+        goto close_all;
     }
     printf("Server connected successfully...\n");
 
@@ -58,8 +60,8 @@ int main(){
         switch(choice){
             case SEND_DATA:
             if(send_data(buffer,sockfd) != 0){
-                close(sockfd);
-                return WR_ERR;
+                exit_code = WR_ERR;
+                goto close_all;
             }  
                 break;
             
@@ -72,6 +74,8 @@ int main(){
                 printf("Invalid Option try again.\n");
         }
     }
-    close(sockfd);
-    return 0;
+
+    close_all:
+    if (sockfd != -1)close(sockfd);
+    return exit_code;
 }
