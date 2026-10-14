@@ -29,19 +29,16 @@ int main(){
 
     //socket binding
     if(bind(sockfd,(struct sockaddr*) &addr,addrlen) == -1){
-        perror("Error in binding the socket");
         exit_code = SOCKET_BIND_ERR;
         goto close_all;
     }
     printf("Binding created successfully\n");
 
     //socket listening
-    if(listen(sockfd,MAX_QUEUE_LEN) == -1){
-        perror("Error in listening the Socket");
+    if(listen_socket(&sockfd) != SUCCESS){
         exit_code = SOCKET_LISTEN_ERR;
         goto close_all;
     }
-    printf("listen done successfully\n");
 
     //socket acception
     new_sockfd = accept(sockfd,(struct sockaddr *) &addr,&addrlen);
