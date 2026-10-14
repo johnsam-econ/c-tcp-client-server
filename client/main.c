@@ -5,7 +5,7 @@
 #include<arpa/inet.h>
 #include<string.h>
 
-#include "../confing.h"
+#include "../config.h"
 #include "client.h"
 
 //function declaration

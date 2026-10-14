@@ -4,7 +4,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "../confing.h"
+#include "../config.h"
 #include "server.h"
 
 int main(){
