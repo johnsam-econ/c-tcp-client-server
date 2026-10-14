@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 
 #include "../confing.h"
+#include "server.h"
 
 int main(){
     int exit_code = SUCCESS;

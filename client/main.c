@@ -6,6 +6,7 @@
 #include<string.h>
 
 #include "../confing.h"
+#include "client.h"
 
 //function declaration
 void print_menu();
