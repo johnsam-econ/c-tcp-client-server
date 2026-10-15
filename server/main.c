@@ -57,6 +57,9 @@ int main(){
             exit_code = -100;
             goto close_all;
         }
+        else if(pid == 0){
+            printf("Client Connected sucessfully with %d\n",getpid());
+        }
 
         if(pid == 0){
             //child
@@ -82,7 +85,7 @@ int main(){
 
     // Close whichever descriptors were successfully created before returning.
     close_all:
-    if (pid != 0 | pid == -1) printf("\nServer Terminating\n");
+    if ((pid != 0) || (pid == -1)) printf("\nServer Terminating\n");
 
     if(new_sockfd != -1)close(new_sockfd);
     if(sockfd != -1) close(sockfd);

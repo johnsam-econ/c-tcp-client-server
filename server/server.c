@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <signal.h>
+#include <unistd.h>
 
 int server_status = 1;
 
@@ -44,7 +45,6 @@ int accept_socket(int *fd,int *new_fd,struct sockaddr_in* addr,socklen_t* addrle
     if(*new_fd == ERROR){
         return ERROR;
     }
-    printf("Client Connected sucessfully...\n");
     return SUCCESS;
 }
 
@@ -63,11 +63,11 @@ int server_receive(int fd,char *buffer,int len){
         perror("Error in Reading the data from the server");
     }
     else if(status == 0){
-        printf("Client Disconnected..\n");
+        printf("Client Disconnected (%d)\n",getpid());
     }
     else{
         // recv does not append a string terminator; data is a byte stream.
-        printf("client --> %s",buffer);
+        printf("client (%d)--> %s",getpid(),buffer);
         memset(buffer, 0, 1024*sizeof(char)); 
     }
     return status;
