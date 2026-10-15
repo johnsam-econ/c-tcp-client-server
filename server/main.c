@@ -14,47 +14,47 @@ int main(){
     socklen_t addrlen = (socklen_t) sizeof(addr);
     char buffer[1024] = {'\0'};
 
-    //socket creation
+    // Keep descriptors initialized so cleanup can safely skip unopened sockets.
     if(create_socket(&sockfd) == -1){
         exit_code = SOCKET_CREATE_ERR;
         goto close_all;
     }
 
-    //address definition
+    // Configure the local IPv4 address and listening port.
     addr_defn(&addr);
 
-    //socket binding
+    // Reserve the configured address and port for this server.
     if(bind_socket(sockfd,addr,addrlen) == ERROR){
         exit_code = SOCKET_BIND_ERR;
         goto close_all;
     }
 
-    //socket listening
+    // Prepare the socket to queue incoming client connections.
     if(listen_socket(&sockfd) != SUCCESS){
         exit_code = SOCKET_LISTEN_ERR;
         goto close_all;
     }
 
-    //socket acception
+    // Accept one client; this call blocks until a connection arrives.
     if(accept_socket(&sockfd,&new_sockfd,&addr,&addrlen) == ERROR){
         exit_code = SOCKET_ACCEPT_ERR;
         goto close_all;
     }
 
-    //server
+    // Receive from the accepted client until it disconnects or recv fails.
     while(1){
-        switch(server_receive(new_sockfd,buffer,addrlen)){
+        switch(server_receive(new_sockfd,buffer,sizeof(buffer))){
             case ERROR:
-                exit_code == RD_ERR;
+                exit_code = RD_ERR;
                 goto close_all;
             
             case DISCONNECT:
-                exit_code == SUCCESS;
+                exit_code = SUCCESS;
                 goto close_all;
         }
     }
 
-    //closing all
+    // Close whichever descriptors were successfully created before returning.
     close_all:
     if(new_sockfd != -1)close(new_sockfd);
     if(sockfd != -1) close(sockfd);

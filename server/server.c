@@ -3,6 +3,7 @@
 #include "../config.h"
 #include <netinet/in.h>
 
+// Create an IPv4 TCP socket; the caller is responsible for closing it.
 int create_socket(int *fd){
     *fd = socket(AF_INET,SOCK_STREAM,0);
     if(*fd == ERROR){
@@ -13,6 +14,7 @@ int create_socket(int *fd){
     return SUCCESS;
 }
 
+// Bind the listening socket to the address and port configured in config.h.
 int bind_socket(int fd,struct sockaddr_in addr,socklen_t addrlen){
     if(bind(fd,(struct sockaddr*) &addr,addrlen) == ERROR){
         perror("Error in binding the socket");
@@ -22,6 +24,7 @@ int bind_socket(int fd,struct sockaddr_in addr,socklen_t addrlen){
     return SUCCESS;
 }
 
+// Start listening; MAX_QUEUE_LEN limits pending connections, not active clients.
 int listen_socket(int *fd){
     if(listen(*fd,MAX_QUEUE_LEN) == -1){
         perror("Error in listening the Socket");
@@ -31,6 +34,7 @@ int listen_socket(int *fd){
     return SUCCESS;
 }
 
+// Accept one client and return its connected socket in new_fd.
 int accept_socket(int *fd,int *new_fd,struct sockaddr_in* addr,socklen_t* addrlen){
     *new_fd = accept(*fd,(struct sockaddr*)addr,addrlen);
     if(*new_fd == ERROR){
@@ -41,12 +45,14 @@ int accept_socket(int *fd,int *new_fd,struct sockaddr_in* addr,socklen_t* addrle
     return SUCCESS;
 }
 
+// Prepare the IPv4 endpoint to listen on every local interface.
 void addr_defn(struct sockaddr_in *addr){
     (*addr).sin_family = AF_INET;
     (*addr).sin_port = htons(PORT);
     (*addr).sin_addr.s_addr = INADDR_ANY;
 }
 
+// Return recv's byte count, 0 on disconnect, or ERROR on failure.
 int server_receive(int fd,char *buffer,int len){
     int status = recv(fd,buffer,len,0);
 
@@ -57,6 +63,7 @@ int server_receive(int fd,char *buffer,int len){
         printf("Client Disconnected..\n");
     }
     else{
+        // recv does not append a string terminator; data is a byte stream.
         printf("client --> %s",buffer);
     }
     return status;

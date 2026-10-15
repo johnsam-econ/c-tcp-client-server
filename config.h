@@ -1,10 +1,14 @@
+// TCP server listening configuration.
 #define PORT 8080
 #define MAX_QUEUE_LEN 3
+
+// Socket receive results and client command values.
 #define DISCONNECT 0
 
 #define SEND_DATA 1
 #define EXIT 2
 
+// General operation results and specific server/client failure codes.
 #define ERROR -1
 #define SUCCESS 0
 #define SOCKET_CREATE_ERR -1
