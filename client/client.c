@@ -10,7 +10,7 @@
 int create_socket(int *fd){
     *fd = socket(AF_INET,SOCK_STREAM,0);
     if(*fd == ERROR){
-        perror("Error in binding the socket");
+        perror("Error in creating the socket");
         return ERROR;
     }
     printf("Socket created successfully\n");

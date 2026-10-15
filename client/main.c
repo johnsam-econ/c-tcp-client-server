@@ -18,7 +18,6 @@ int main(){
     int choice = -1;
     int loop = 1;
     char buffer[1024];
-
     char *server_ip = "127.0.0.1";
 
     // socket creation
@@ -42,10 +41,8 @@ int main(){
 
     //client
     while(loop){
-
         print_menu();
         choice = get_option();
-
         switch(choice){
             case SEND_DATA:
                 if(send_data(buffer,sockfd) != 0){
@@ -53,12 +50,10 @@ int main(){
                     goto close_all;
                 }  
                 break;
-            
             case EXIT:
                 printf("Exiting..\n");
                 loop = 0;
                 break;
-
             default:
                 printf("Invalid Option try again.\n");
         }
