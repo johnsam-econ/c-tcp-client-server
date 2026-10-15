@@ -10,7 +10,6 @@
 int main(){
     int exit_code = SUCCESS;
     int sockfd = -1, new_sockfd =-1;
-    int status = -1;
     struct sockaddr_in addr;
     socklen_t addrlen = (socklen_t) sizeof(addr);
     char buffer[1024] = {'\0'};
@@ -44,22 +43,21 @@ int main(){
 
     //server
     while(1){
-        status = recv(new_sockfd,buffer,sizeof(buffer),0);
-        if(status == -1){
-            perror("Error in Reading the data from the server");
-            exit_code = RD_ERR;
-            goto close_all;
+        switch(server_receive(new_sockfd,buffer,addrlen)){
+            case ERROR:
+                exit_code == RD_ERR;
+                goto close_all;
+            
+            case DISCONNECT:
+                exit_code == SUCCESS;
+                goto close_all;
         }
-        if(status == 0){
-            printf("Client Disconnected..\n");
-            break;
-        }
-        printf("client --> %s",buffer);
     }
 
-
+    //closing all
     close_all:
     if(new_sockfd != -1)close(new_sockfd);
     if(sockfd != -1) close(sockfd);
+    printf("Exiting with exit_code of %d\n",exit_code);
     return exit_code;
 }

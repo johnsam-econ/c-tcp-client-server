@@ -1,5 +1,6 @@
 #define PORT 8080
 #define MAX_QUEUE_LEN 3
+#define DISCONNECT 0
 
 #define SEND_DATA 1
 #define EXIT 2

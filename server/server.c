@@ -46,3 +46,18 @@ void addr_defn(struct sockaddr_in *addr){
     (*addr).sin_port = htons(PORT);
     (*addr).sin_addr.s_addr = INADDR_ANY;
 }
+
+int server_receive(int fd,char *buffer,int len){
+    int status = recv(fd,buffer,len,0);
+
+    if(status == -1){
+        perror("Error in Reading the data from the server");
+    }
+    else if(status == 0){
+        printf("Client Disconnected..\n");
+    }
+    else{
+        printf("client --> %s",buffer);
+    }
+    return status;
+}
