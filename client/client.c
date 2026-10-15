@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <string.h>
+#include <netinet/in.h>
 
 #include "../config.h"
 
@@ -13,6 +14,17 @@ int create_socket(int *fd){
     }
     printf("Socket created successfully\n");
     return SUCCESS;
+}
+
+int connect_socket(int fd,struct sockaddr_in addr,socklen_t addrlen){
+    if(connect(fd,(struct sockaddr *) &addr,addrlen) == -1){
+        perror("Error in connecting the socket");
+        return ERROR;
+    }
+    else{
+        printf("Server connected successfully...\n");
+        return SUCCESS;
+    }
 }
 
 void print_menu(){

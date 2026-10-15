@@ -43,12 +43,10 @@ int main(){
     }
 
     //socket connection
-    if(connect(sockfd,(struct sockaddr*) &addr,addrlen) == -1){
-        perror("Error in connecting the socket");
+    if(connect_socket(sockfd,addr,addrlen) == ERROR){
         exit_code = SOCKET_CONNECT_ERR;
         goto close_all;
     }
-    printf("Server connected successfully...\n");
 
     //client
     while(loop){
