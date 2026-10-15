@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 #include "../config.h"
 #include "server.h"
@@ -12,6 +13,7 @@ extern int server_status;
 
 // Run the server lifecycle: create, bind, listen, accept, and receive.
 int main(){
+    int pid = -1;
     int exit_code = SUCCESS;
     int sockfd = -1, new_sockfd =-1;
     struct sockaddr_in addr;
@@ -41,33 +43,47 @@ int main(){
 
     // Let Ctrl+C stop the server loop so it can close its sockets cleanly.
     signal(SIGINT,&close_sig);
-    // Accept one client; this call blocks until a connection arrives.
-    if(accept_socket(&sockfd,&new_sockfd,&addr,&addrlen) == ERROR){
-        if(server_status != 0) exit_code = SOCKET_ACCEPT_ERR;
-        goto close_all;
-    }
 
     // Receive from the accepted client until it disconnects or recv fails.
     while(server_status){
-        switch(server_receive(new_sockfd,buffer,sizeof(buffer))){
-            case ERROR:
-                exit_code = RD_ERR;
-                goto close_all;
-            
-            case DISCONNECT:
-                // Wait for another client after the current client disconnects.
-                printf("Reconnecting...\n");
-                    if(accept_socket(&sockfd,&new_sockfd,&addr,&addrlen) == ERROR){
-                        if(server_status != 0) exit_code = SOCKET_ACCEPT_ERR;
-                        goto close_all;
-                    }
-                // exit_code = SUCCESS;
-                // goto close_all;
+        if(accept_socket(&sockfd,&new_sockfd,&addr,&addrlen) == ERROR){
+            if(server_status != 0) exit_code = SOCKET_ACCEPT_ERR;
+            goto close_all;
         }
+
+        pid = fork();
+        if(pid == -1){
+            perror("Error in creating a process for client");
+            exit_code = -100;
+            goto close_all;
+        }
+
+        if(pid == 0){
+            //child
+            close(sockfd);
+            sockfd = -1;
+            while(1){
+                switch(server_receive(new_sockfd,buffer,sizeof(buffer))){
+                case ERROR:
+                    exit_code = RD_ERR;
+                    goto close_all;
+                
+                case DISCONNECT:
+                    goto close_all;
+                }
+            }
+
+        }
+        else{
+            close(new_sockfd);
+            new_sockfd = -1;
+        } 
     }
 
     // Close whichever descriptors were successfully created before returning.
     close_all:
+    if (pid != 0 | pid == -1) printf("\nServer Terminating\n");
+
     if(new_sockfd != -1)close(new_sockfd);
     if(sockfd != -1) close(sockfd);
     return exit_code;
