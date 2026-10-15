@@ -40,3 +40,9 @@ int accept_socket(int *fd,int *new_fd,struct sockaddr_in* addr,socklen_t* addrle
     printf("Client Connected sucessfully...\n");
     return SUCCESS;
 }
+
+void addr_defn(struct sockaddr_in *addr){
+    (*addr).sin_family = AF_INET;
+    (*addr).sin_port = htons(PORT);
+    (*addr).sin_addr.s_addr = INADDR_ANY;
+}

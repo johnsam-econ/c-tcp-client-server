@@ -22,9 +22,7 @@ int main(){
     }
 
     //address definition
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(PORT);
-    addr.sin_addr.s_addr = INADDR_ANY;
+    addr_defn(&addr);
 
     //socket binding
     if(bind_socket(sockfd,addr,addrlen) == ERROR){
