@@ -24,7 +24,7 @@ int main(){
     int loop = 1;
     char buffer[1024];
 
-    char server_ip[] = "127.0.0.1";
+    char *server_ip = "127.0.0.1";
 
     // socket creation
     if(create_socket(&sockfd) == -1){
@@ -34,10 +34,7 @@ int main(){
     }
 
     //address defintion
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(PORT);
-    if(inet_pton(AF_INET,server_ip,&addr.sin_addr) != 1){
-        perror("Invalid Ip Address");
+    if(addr_defn(&addr,server_ip) == ERROR){
         exit_code = SOCKET_CONNECT_ERR;
         goto close_all;
     }

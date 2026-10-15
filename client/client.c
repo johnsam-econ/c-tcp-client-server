@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "../config.h"
 
@@ -25,6 +26,16 @@ int connect_socket(int fd,struct sockaddr_in addr,socklen_t addrlen){
         printf("Server connected successfully...\n");
         return SUCCESS;
     }
+}
+
+int addr_defn(struct sockaddr_in *addr,char *ip){
+    (*addr).sin_family = AF_INET;
+    (*addr).sin_port = htons(PORT);
+    if(inet_pton(AF_INET,ip,&addr->sin_addr) != 1){
+        perror("Invalid Ip Address");
+        return ERROR;
+    }
+    return SUCCESS;
 }
 
 void print_menu(){
