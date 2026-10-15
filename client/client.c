@@ -6,7 +6,7 @@
 
 #include "../config.h"
 
-//function definition
+// Create an IPv4 TCP socket and return its descriptor through fd.
 int create_socket(int *fd){
     *fd = socket(AF_INET,SOCK_STREAM,0);
     if(*fd == ERROR){
@@ -17,6 +17,7 @@ int create_socket(int *fd){
     return SUCCESS;
 }
 
+// Connect the socket to the supplied server endpoint.
 int connect_socket(int fd,struct sockaddr_in addr,socklen_t addrlen){
     if(connect(fd,(struct sockaddr *) &addr,addrlen) == -1){
         perror("Error in connecting the socket");
@@ -28,6 +29,7 @@ int connect_socket(int fd,struct sockaddr_in addr,socklen_t addrlen){
     }
 }
 
+// Fill in the IPv4 server endpoint from the configured port and IP string.
 int addr_defn(struct sockaddr_in *addr,char *ip){
     (*addr).sin_family = AF_INET;
     (*addr).sin_port = htons(PORT);
@@ -38,6 +40,7 @@ int addr_defn(struct sockaddr_in *addr,char *ip){
     return SUCCESS;
 }
 
+// Display the actions the client accepts.
 void print_menu(){
     printf("=======MENU======\n");
     printf("1.Send Message.\n");
@@ -45,6 +48,7 @@ void print_menu(){
     printf("=================\n");
 }
 
+// Read a menu selection and discard the rest of its input line.
 int get_option(){
     int x;
     printf("Enter the choice: ");
@@ -61,6 +65,7 @@ int get_option(){
     }
 }
 
+// Read one line from standard input and send its bytes to the server.
 int send_data(char *buffer, int sockfd){
     printf("Enter the message:");
 

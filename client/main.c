@@ -8,9 +8,9 @@
 #include "../config.h"
 #include "client.h"
 
-//main
+// Connect to the configured server and handle menu actions until the user exits.
 int main(){
-    //definition
+    // Keep the socket descriptor initialized so shared cleanup can check it.
     int exit_code = SUCCESS;
     int sockfd = -1;
     struct sockaddr_in addr = {0};
@@ -20,26 +20,26 @@ int main(){
     char buffer[1024];
     char *server_ip = "127.0.0.1";
 
-    // socket creation
+    // Create the TCP socket used for the server connection.
     if(create_socket(&sockfd) == -1){
         perror("Error in creating the socket");
         exit_code = SOCKET_CREATE_ERR;
         goto close_all;
     }
 
-    //address defintion
+    // Build the server address using the configured port and selected IP.
     if(addr_defn(&addr,server_ip) == ERROR){
         exit_code = SOCKET_CONNECT_ERR;
         goto close_all;
     }
 
-    //socket connection
+    // Establish the connection before accepting menu commands.
     if(connect_socket(sockfd,addr,addrlen) == ERROR){
         exit_code = SOCKET_CONNECT_ERR;
         goto close_all;
     }
 
-    //client
+    // Keep handling menu choices until EXIT is selected or sending fails.
     while(loop){
         print_menu();
         choice = get_option();
@@ -59,6 +59,7 @@ int main(){
         }
     }
 
+    // Release the socket on normal exit and on any earlier error.
     close_all:
     if (sockfd != -1)close(sockfd);
     return exit_code;
