@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include "../config.h"
 #include <netinet/in.h>
+#include <string.h>
 
 // Create an IPv4 TCP socket; the caller is responsible for closing it.
 int create_socket(int *fd){
@@ -65,6 +66,7 @@ int server_receive(int fd,char *buffer,int len){
     else{
         // recv does not append a string terminator; data is a byte stream.
         printf("client --> %s",buffer);
+        memset(buffer, 0, 1024*sizeof(char)); 
     }
     return status;
 }

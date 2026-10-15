@@ -49,8 +49,13 @@ int main(){
                 goto close_all;
             
             case DISCONNECT:
-                exit_code = SUCCESS;
-                goto close_all;
+                printf("Reconnecting...\n");
+                    if(accept_socket(&sockfd,&new_sockfd,&addr,&addrlen) == ERROR){
+                        exit_code = SOCKET_ACCEPT_ERR;
+                        goto close_all;
+                    }
+                // exit_code = SUCCESS;
+                // goto close_all;
         }
     }
 
