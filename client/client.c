@@ -5,6 +5,16 @@
 #include "../config.h"
 
 //function definition
+int create_socket(int *fd){
+    *fd = socket(AF_INET,SOCK_STREAM,0);
+    if(*fd == ERROR){
+        perror("Error in binding the socket");
+        return ERROR;
+    }
+    printf("Socket created successfully\n");
+    return SUCCESS;
+}
+
 void print_menu(){
     printf("=======MENU======\n");
     printf("1.Send Message.\n");
