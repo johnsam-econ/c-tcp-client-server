@@ -30,3 +30,13 @@ int listen_socket(int *fd){
     printf("listen done successfully\n");
     return SUCCESS;
 }
+
+int accept_socket(int *fd,int *new_fd,struct sockaddr_in* addr,socklen_t* addrlen){
+    *new_fd = accept(*fd,(struct sockaddr*)addr,addrlen);
+    if(*new_fd == ERROR){
+        perror("Error in accepting the new socket");
+        return ERROR;
+    }
+    printf("Client Connected sucessfully...\n");
+    return SUCCESS;
+}

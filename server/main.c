@@ -39,13 +39,10 @@ int main(){
     }
 
     //socket acception
-    new_sockfd = accept(sockfd,(struct sockaddr *) &addr,&addrlen);
-    if(new_sockfd == -1){
-        perror("Error in accepting the new socket");
+    if(accept_socket(&sockfd,&new_sockfd,&addr,&addrlen) == ERROR){
         exit_code = SOCKET_ACCEPT_ERR;
         goto close_all;
     }
-    printf("Client Connected sucessfully...\n");
 
     //server
     while(1){
