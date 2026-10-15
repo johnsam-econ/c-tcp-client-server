@@ -8,11 +8,6 @@
 #include "../config.h"
 #include "client.h"
 
-//function declaration
-void print_menu();
-int get_option();
-int send_data(char *buffer, int sockfd);
-
 //main
 int main(){
     //definition
@@ -53,10 +48,10 @@ int main(){
 
         switch(choice){
             case SEND_DATA:
-            if(send_data(buffer,sockfd) != 0){
-                exit_code = WR_ERR;
-                goto close_all;
-            }  
+                if(send_data(buffer,sockfd) != 0){
+                    exit_code = WR_ERR;
+                    goto close_all;
+                }  
                 break;
             
             case EXIT:
