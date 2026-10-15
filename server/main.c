@@ -3,10 +3,14 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <signal.h>
 
 #include "../config.h"
 #include "server.h"
 
+extern int server_status;
+
+// Run the server lifecycle: create, bind, listen, accept, and receive.
 int main(){
     int exit_code = SUCCESS;
     int sockfd = -1, new_sockfd =-1;
@@ -35,22 +39,30 @@ int main(){
         goto close_all;
     }
 
+    // Let Ctrl+C stop the server loop so it can close its sockets cleanly.
+    signal(SIGINT,&close_sig);
     // Accept one client; this call blocks until a connection arrives.
     if(accept_socket(&sockfd,&new_sockfd,&addr,&addrlen) == ERROR){
-        exit_code = SOCKET_ACCEPT_ERR;
+        if(server_status != 0) exit_code = SOCKET_ACCEPT_ERR;
         goto close_all;
     }
 
     // Receive from the accepted client until it disconnects or recv fails.
-    while(1){
+    while(server_status){
         switch(server_receive(new_sockfd,buffer,sizeof(buffer))){
             case ERROR:
                 exit_code = RD_ERR;
                 goto close_all;
             
             case DISCONNECT:
-                exit_code = SUCCESS;
-                goto close_all;
+                // Wait for another client after the current client disconnects.
+                printf("Reconnecting...\n");
+                    if(accept_socket(&sockfd,&new_sockfd,&addr,&addrlen) == ERROR){
+                        if(server_status != 0) exit_code = SOCKET_ACCEPT_ERR;
+                        goto close_all;
+                    }
+                // exit_code = SUCCESS;
+                // goto close_all;
         }
     }
 
@@ -58,6 +70,5 @@ int main(){
     close_all:
     if(new_sockfd != -1)close(new_sockfd);
     if(sockfd != -1) close(sockfd);
-    printf("Exiting with exit_code of %d\n",exit_code);
     return exit_code;
 }

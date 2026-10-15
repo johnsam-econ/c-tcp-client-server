@@ -3,6 +3,9 @@
 #include "../config.h"
 #include <netinet/in.h>
 #include <string.h>
+#include <signal.h>
+
+int server_status = 1;
 
 // Create an IPv4 TCP socket; the caller is responsible for closing it.
 int create_socket(int *fd){
@@ -39,7 +42,6 @@ int listen_socket(int *fd){
 int accept_socket(int *fd,int *new_fd,struct sockaddr_in* addr,socklen_t* addrlen){
     *new_fd = accept(*fd,(struct sockaddr*)addr,addrlen);
     if(*new_fd == ERROR){
-        perror("Error in accepting the new socket");
         return ERROR;
     }
     printf("Client Connected sucessfully...\n");
@@ -69,4 +71,9 @@ int server_receive(int fd,char *buffer,int len){
         memset(buffer, 0, 1024*sizeof(char)); 
     }
     return status;
+}
+
+void close_sig(){
+    // Signal the main loop to stop; descriptor cleanup remains in main().
+    server_status = 0;
 }
