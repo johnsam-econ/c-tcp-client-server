@@ -17,7 +17,6 @@ int main(){
 
     //socket creation
     if(create_socket(&sockfd) == -1){
-        perror("Error in creating the socket");
         exit_code = SOCKET_CREATE_ERR;
         goto close_all;
     }
@@ -28,11 +27,10 @@ int main(){
     addr.sin_addr.s_addr = INADDR_ANY;
 
     //socket binding
-    if(bind(sockfd,(struct sockaddr*) &addr,addrlen) == -1){
+    if(bind_socket(sockfd,addr,addrlen) == ERROR){
         exit_code = SOCKET_BIND_ERR;
         goto close_all;
     }
-    printf("Binding created successfully\n");
 
     //socket listening
     if(listen_socket(&sockfd) != SUCCESS){

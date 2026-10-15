@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include "../config.h"
+#include <netinet/in.h>
 
 int create_socket(int *fd){
     *fd = socket(AF_INET,SOCK_STREAM,0);
@@ -9,6 +10,15 @@ int create_socket(int *fd){
         return ERROR;
     }
     printf("Socket created successfully\n");
+    return SUCCESS;
+}
+
+int bind_socket(int fd,struct sockaddr_in addr,socklen_t addrlen){
+    if(bind(fd,(struct sockaddr*) &addr,addrlen) == ERROR){
+        perror("Error in binding the socket");
+        return ERROR;
+    }
+    printf("Binding created successfully\n");
     return SUCCESS;
 }
 
