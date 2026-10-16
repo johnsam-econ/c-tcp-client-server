@@ -67,15 +67,29 @@ int get_option(){
 
 // Read one line from standard input and send its bytes to the server.
 int send_data(char *buffer, int sockfd){
+    // The client waits for a server status response after each message.
+    int ack = ERROR;
     printf("Enter the message:");
 
     if(fgets(buffer,1024,stdin) == NULL){
         return WR_ERR;
     }
-    if(send(sockfd,buffer,strlen(buffer),0) == -1){
+    if(send(sockfd,buffer,strlen(buffer),0) == ERROR){
         perror("Error in sending data to the server");
         return WR_ERR;
     }
-    printf("Data sent to server successfully\n"); 
-    return 0;
+    // Treat a missing response or a non-success status as a failed send.
+    if(recv(sockfd,&ack,sizeof(int),0) == ERROR){
+        perror("error in reciving the acknowledgement");
+        return WR_ERR;
+    }
+    if(ack == SUCCESS){
+        printf("Data sent to server successfully\n");
+        ack =ERROR;
+    }
+    else{
+        printf("Server Disconnected. Closing client...\n");
+        return WR_ERR;
+    }
+    return SUCCESS;
 }
