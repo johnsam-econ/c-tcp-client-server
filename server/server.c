@@ -5,6 +5,7 @@
 #include <string.h>
 #include <signal.h>
 
+// Controls the receive loop; close_sig clears it when shutdown is requested.
 int server_status = 1;
 
 // Create an IPv4 TCP socket; the caller is responsible for closing it.
@@ -58,6 +59,8 @@ void addr_defn(struct sockaddr_in *addr){
 // Return recv's byte count, 0 on disconnect, or ERROR on failure.
 int server_receive(int fd,char *buffer,int len){
     int status = recv(fd,buffer,len,0);
+    // A successful receive is acknowledged after its payload has been handled.
+    int ack = ERROR;
 
     if(status == -1){
         perror("Error in Reading the data from the server");
@@ -68,6 +71,14 @@ int server_receive(int fd,char *buffer,int len){
     else{
         // recv does not append a string terminator; data is a byte stream.
         printf("client --> %s",buffer);
+
+        ack = SUCCESS;
+        // The client waits for this status before sending its next message.
+        if(send(fd,&ack,sizeof(ack),0) == -1){
+            return status;
+        }
+        ack = ERROR;
+
         memset(buffer, 0, 1024*sizeof(char)); 
     }
     return status;
