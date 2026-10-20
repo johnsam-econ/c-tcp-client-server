@@ -101,8 +101,7 @@ int main(){
                 if (FD_ISSET(i, &readfds) && i != sockfd) {
                     switch (server_receive(i, buffer, sizeof(buffer))) {
                         case ERROR:
-                            exit_code = RD_ERR;
-                            goto close_all;
+                            printf("Error in client(%d)",i);
 
                         case DISCONNECT:
                             // Remove the disconnected client and release its slot.
