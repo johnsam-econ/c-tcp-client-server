@@ -92,6 +92,7 @@ int main(){
                     FD_CLR(sockfd, &masterfds);
                     printf("Max Client connected\n");
                 }
+            }
                 if (FD_ISSET(i, &readfds) && i != sockfd) {
                     switch (server_receive(i, buffer, sizeof(buffer))) {
                         case ERROR:
@@ -125,7 +126,7 @@ int main(){
                             }
                     }
                 }
-            }
+            
         }
     }
 
