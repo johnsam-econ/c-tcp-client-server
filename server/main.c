@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <sys/select.h>
+#include <errno.h>
 
 #include "../config.h"
 #include "server.h"
@@ -64,6 +65,10 @@ int main(){
         // select modifies readfds, so restore it from the tracked socket set.
         readfds = masterfds;
         if (select(maxfd + 1, &readfds, NULL, NULL, NULL) < 0) {
+            if(errno == EINTR && server_status == 0){
+                break;
+            }
+
             perror("Select");
             exit_code = ERROR;
             goto close_all;
