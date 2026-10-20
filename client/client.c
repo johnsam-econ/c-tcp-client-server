@@ -1,3 +1,8 @@
+/*
+ * Client socket helpers.
+ * This file keeps the network operations separate from higher-level menu logic.
+ */
+
 #include <stdio.h>
 #include <sys/socket.h>
 #include <string.h>

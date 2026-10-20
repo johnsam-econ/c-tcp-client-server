@@ -1,3 +1,4 @@
+# Build rules for the C TCP client/server example.
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11
 CPPFLAGS = -I.

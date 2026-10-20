@@ -1,13 +1,24 @@
 # c-tcp-client-server
 
-A simple TCP client/server application written in C using POSIX sockets. The server listens for incoming client connections on a configured port and prints received messages, while the client connects to the server and lets the user send text messages.
+A small TCP client/server example written in C using POSIX sockets. The server listens for incoming connections, accepts messages from clients, and prints them to the terminal. The client connects to the server and provides a simple menu for sending text or exiting cleanly.
+
+## Overview
+
+This project demonstrates a minimal socket-based client/server workflow in a Linux-style environment. It focuses on the core networking primitives used in many C applications:
+
+- socket creation
+- address configuration
+- connection setup
+- message sending and receipt
+- graceful shutdown
 
 ## Features
 
-- TCP socket communication over IPv4
-- Multi-step client menu for sending or exiting
-- Graceful shutdown support with Ctrl+C on the server
-- Easy build workflow with a Makefile
+- IPv4 TCP communication
+- Simple interactive client menu
+- Server-side loop that accepts multiple client connections up to the configured limit
+- Ctrl+C shutdown handling for the server
+- Easy build workflow using a Makefile
 
 ## Project structure
 
@@ -31,8 +42,8 @@ A simple TCP client/server application written in C using POSIX sockets. The ser
 ## Requirements
 
 - GCC or another C compiler
-- Linux/macOS environment with POSIX sockets support
-- Terminal access to run both programs
+- Linux/macOS environment with POSIX socket support
+- Terminal access to run the client and server concurrently
 
 ## Configuration
 
@@ -40,9 +51,9 @@ The shared network settings live in `config.h`:
 
 - Port: `8080`
 - Maximum queued connections: `3`
-- Client actions: `SEND_DATA` and `EXIT`
+- Client menu actions: `SEND_DATA` and `EXIT`
 
-You can modify these values before building if needed.
+These defaults can be adjusted before building if needed.
 
 ## Build
 
@@ -52,7 +63,7 @@ From the project root, run:
 make
 ```
 
-This builds both the server and client binaries:
+This builds both binaries:
 
 - `server/main`
 - `client/main`
@@ -72,7 +83,7 @@ Start the server in one terminal:
 ./server/main
 ```
 
-Then, in a second terminal, start the client:
+Then start the client in a second terminal:
 
 ```bash
 ./client/main
@@ -96,5 +107,5 @@ make clean
 ## Notes
 
 - The client connects to `127.0.0.1` by default.
-- The server listens on all local interfaces (`INADDR_ANY`) on the configured port.
+- The server binds to `INADDR_ANY`, which listens on all local interfaces for the configured port.
 - This project is intended as a lightweight learning example for socket programming in C.

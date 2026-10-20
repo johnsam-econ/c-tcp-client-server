@@ -1,3 +1,9 @@
+/*
+ * Client entry point.
+ * This program creates a socket, connects to the configured server,
+ * and handles a basic interactive message loop until the user exits.
+ */
+
 #include<stdio.h>
 #include<unistd.h>
 #include<sys/socket.h>

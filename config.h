@@ -1,10 +1,15 @@
-// Shared server/client TCP endpoint configuration.
+/*
+ * Shared configuration for the TCP client/server example.
+ * These constants are used by both the client and the server.
+ */
+
+// TCP port used by the application.
 #define PORT 8080
 
 // Maximum number of pending connections queued by the listening server socket.
 #define MAX_QUEUE_LEN 3
 
-// Maximum number of clients the server can handle at the same time.
+// Maximum number of client sockets the server tracks at one time.
 #define MAX_CLIENT 5
 
 // Result returned by recv when the peer closes the connection.

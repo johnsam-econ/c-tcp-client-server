@@ -1,3 +1,8 @@
+/*
+ * Server-side socket helpers.
+ * These routines manage the listening socket, client acceptance, and receive flow.
+ */
+
 #include <stdio.h>
 #include <sys/socket.h>
 #include "../config.h"

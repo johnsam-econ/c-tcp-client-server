@@ -1,3 +1,9 @@
+/*
+ * Server entry point.
+ * The server monitors incoming connections, accepts client sockets, and receives
+ * messages until shutdown is requested or an error occurs.
+ */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/socket.h>
