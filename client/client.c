@@ -51,14 +51,15 @@ void print_menu(){
     printf("1.Send Message.\n");
     printf("2.Exit.\n");
     printf("=================\n");
+    printf("Enter the choice: ");
 }
 
 // Read a menu selection and discard the rest of its input line.
 int get_option(){
     int x;
-    printf("Enter the choice: ");
+    // printf("Enter the choice: ");
+    
     scanf("%d",&x);
-
     char ch;
     while ((ch = getchar()) != '\n' && ch != EOF);
 

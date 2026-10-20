@@ -10,6 +10,7 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<string.h>
+#include<sys/select.h>
 
 #include "../config.h"
 #include "client.h"
@@ -26,6 +27,12 @@ int main(){
     char buffer[1024];
     char *server_ip = "127.0.0.1";
 
+    fd_set readfds;
+    fd_set masterfds;
+    int maxfd = 0;
+
+    FD_ZERO(&readfds);
+
     // Create the TCP socket used for the server connection.
     if(create_socket(&sockfd) == -1){
         perror("Error in creating the socket");
@@ -38,31 +45,62 @@ int main(){
         exit_code = SOCKET_CONNECT_ERR;
         goto close_all;
     }
+ 
 
     // Establish the connection before accepting menu commands.
     if(connect_socket(sockfd,addr,addrlen) == ERROR){
         exit_code = SOCKET_CONNECT_ERR;
         goto close_all;
     }
+      
+    FD_SET(STDIN_FILENO,&readfds);
+    if(maxfd < STDIN_FILENO) maxfd = STDIN_FILENO;
+    
+    FD_SET(sockfd,&readfds);
+    if(maxfd < sockfd) maxfd = sockfd;
 
+    masterfds = readfds;
+    
     // Keep handling menu choices until EXIT is selected or sending fails.
     while(loop){
+        readfds = masterfds;
+
         print_menu();
-        choice = get_option();
-        switch(choice){
-            case SEND_DATA:
-                if(send_data(buffer,sockfd) != 0){
-                    exit_code = WR_ERR;
-                    goto close_all;
-                }  
-                break;
-            case EXIT:
-                printf("Exiting..\n");
-                loop = 0;
-                break;
-            default:
-                printf("Invalid Option try again.\n");
+        fflush(stdout);
+
+        if(select(maxfd+1,&readfds,NULL,NULL,NULL) == -1){
+            perror("select");
+            goto close_all;
         }
+        if(FD_ISSET(sockfd,&readfds)){
+            if(recv(sockfd,NULL,0,0) == 0){
+                printf("\nserver disconnected\n");
+                goto close_all;
+            }
+        }
+
+        if(FD_ISSET(STDIN_FILENO,&readfds)){
+            choice = get_option();
+
+            switch(choice){
+                case SEND_DATA:
+                    if(send_data(buffer,sockfd) != 0){
+                        exit_code = WR_ERR;
+                        goto close_all;
+                    }  
+                    break;
+                case EXIT:
+                    printf("Exiting..\n");
+                    loop = 0;
+                    break;
+                default:
+                    printf("Invalid Option try again.\n");
+            }
+        }
+        
+
+        
+        
     }
 
     // Release the socket on normal exit and on any earlier error.
