@@ -4,6 +4,9 @@
 // Maximum number of pending connections queued by the listening server socket.
 #define MAX_QUEUE_LEN 3
 
+// Maximum number of clients the server can handle at the same time.
+#define MAX_CLIENT 5
+
 // Result returned by recv when the peer closes the connection.
 #define DISCONNECT 0
 
